@@ -139,5 +139,6 @@ async function getAllUsers() {
     updateUser,
     createPost,
     updatePost,
-    getAllPosts
+    getAllPosts,
+    getUserById
   }
