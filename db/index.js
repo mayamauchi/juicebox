@@ -111,7 +111,26 @@ async function getAllUsers() {
       throw error;
     }
   }
-  
+
+  async function getUserById(userId) {
+    try {
+      const { rows: [user] } = await client.query(`
+        SELECT * FROM users
+        WHERE id = ${userId}
+      `)
+      if(!user){
+        return null
+      }
+
+      delete user.password
+      const allPosts = await getPostsByUser(userId)
+      user.posts = allPosts
+      return user
+
+    } catch (error) {
+      throw error
+    }
+  }
 
  module.exports = {
     client,
