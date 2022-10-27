@@ -57,9 +57,8 @@ async function getAllUsers() {
     async function createPost({ authorId, title, content }) {
     try {
         const { rows: [post] } = await client.query(`
-        INSERT INTO posts(authorId, title, content) 
-        VALUES($1, $2, $3, $4) 
-        ON CONFLICT (authorId) DO NOTHING 
+        INSERT INTO posts("authorId", title, content) 
+        VALUES($1, $2, $3) 
         RETURNING *;
       `, [authorId, title, content]);
     } catch (error) {
@@ -67,7 +66,7 @@ async function getAllUsers() {
     }
   }
 
-  async function updatePost(id, fields = {title, content, active}) {
+  async function updatePost(id, fields = {}) {
     const setString = Object.keys(fields).map(
       (key, index) => `"${ key }"=$${ index + 1 }`
     ).join(', ');
@@ -75,7 +74,7 @@ async function getAllUsers() {
     if (setString.length === 0) {
       return;
     }
-  
+    console.log(fields, id, setString)
     try {
       const {rows: [post]} = await client.query(`
         UPDATE posts
@@ -92,7 +91,7 @@ async function getAllUsers() {
 
   async function getAllPosts() {
     const { rows } = await client.query(
-      `SELECT authorId, title, content, active
+      `SELECT "authorId", id, title, content, active
       FROM posts;
     `);
   
@@ -129,6 +128,48 @@ async function getAllUsers() {
 
     } catch (error) {
       throw error
+    }
+  }
+
+  async function createTags(tagList) {
+    if (tagList.length === 0) { 
+      return; 
+    }s
+    // need something like: $1), ($2), ($3 
+    const insertValues = tagList.map(
+      (_, index) => `$${index + 1}`).join('), (');
+    // then we can use: (${ insertValues }) in our string template
+  
+    // need something like $1, $2, $3
+    const selectValues = tagList.map(
+      (_, index) => `$${index + 1}`).join(', ');
+    // then we can use (${ selectValues }) in our string template
+  
+    try {
+        // insert the tags, doing nothing on conflict
+      // returning nothing, we'll query after
+      await client.query(`
+      INSERT INTO tags(name)
+      VALUES (${ insertValues })
+      ON CONFLICT (name) DO NOTHING;
+      
+      `,tagList);
+
+      // select all tags where the name is in our taglist
+      // return the rows from the query
+      const {rows} = await client.query(`
+      SELECT * FROM tags
+      WHERE name
+      IN (${ selectValues });
+      `, tagList);
+
+      return rows;
+
+    
+  
+      
+    } catch (error) {
+      throw error;
     }
   }
 
