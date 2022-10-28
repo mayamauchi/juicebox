@@ -1,12 +1,12 @@
 require('dotenv').config();
-
+const cors = require('cors');
 
 const PORT = 3000;
 const express = require('express');
 const server = express();
 const morgan = require('morgan');
 server.use(morgan('dev'));
-
+server.use(cors())
 server.use(express.json())
 
 const apiRouter = require('./api');
