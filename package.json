@@ -11,14 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mayamauchi/juicebox.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mayamauchi/juicebox/issues"
-  },
-  "homepage": "https://github.com/mayamauchi/juicebox#readme",
+ 
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
