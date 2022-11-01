@@ -335,5 +335,6 @@ async function getAllUsers() {
     getPostsByUser,
     getPostsByTagName,
     getAllTags,
-    getUserByUsername
+    getUserByUsername,
+    getPostById
   }
