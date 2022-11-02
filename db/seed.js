@@ -149,6 +149,7 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialPosts();
+    await createInitialTags();
 
   } catch (error) {
     throw error;

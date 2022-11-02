@@ -24,8 +24,12 @@ tagsRouter.use((req, res, next) => {
     console.log(tagName)
 
     try {
+      const allTags = await getPostsByTagName(tagName);
       // use our method to get posts by tag name from the db
-      const posts = await getPostsByTagName(tagName);
+      const posts = allTags.filter(post => {
+        return post.active || (req.user && post.author.id === req.user.id);
+
+      })
       // send out an object to the client { posts: // the posts }
       res.send({ posts: posts });
     } catch ({ name, message }) {
