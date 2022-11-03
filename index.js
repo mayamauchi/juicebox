@@ -18,4 +18,4 @@ client.connect();
 server.listen(PORT, () => {
   console.log('The server is up on port', PORT)
 });
-
+//app.use has priority over app.get

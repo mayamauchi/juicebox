@@ -15,8 +15,9 @@ apiRouter.use(async (req, res, next) => {
   if (!auth) {
     next();
   } else if (auth.startsWith(prefix)) {
+        // recover the token
     const token = auth.slice(prefix.length);
-
+    //on a successful verify, read database 
     try {
       const { id } = jwt.verify(token, JWT_SECRET);
 
@@ -29,6 +30,7 @@ apiRouter.use(async (req, res, next) => {
     }
   } else {
     next({
+      //a failed verify throws an error
       name: 'AuthorizationHeaderError',
       message: `Authorization token must start with ${ prefix }`
     });

@@ -1,5 +1,6 @@
 const { Client } = require('pg');
 
+// supply the db name and location of the database
 const client = new Client('postgres://localhost:5432/juicebox-dev');
 
 module.exports = {
@@ -32,16 +33,20 @@ async function getAllUsers() {
   }
 
   async function updateUser(id, fields = {}) {
+      // build the set string
     const setString = Object.keys(fields).map(
       (key, index) => `"${ key }"=$${ index + 1 }`
     ).join(', ');
-  
+    //map is turning each key into a string where the key name is in quotes and have a parameter whose numeric value is one greater than the index of that particular key
+
+    // return early if this is called without fields
     if (setString.length === 0) {
       return;
     }
   
     try {
-      const {rows: [user]} = await client.query(`
+        // we can use advanced destructuring here
+        const {rows: [user]} = await client.query(`
         UPDATE users
         SET ${ setString }
         WHERE id=${ id }
@@ -168,11 +173,21 @@ async function getAllUsers() {
       if(!user){
         return null
       }
+    // first get the user (NOTE: Remember the query returns 
+    // (1) an object that contains 
+    // (2) a `rows` array that (in this case) will contain 
+    // (3) one object, which is our user.
+    // if it doesn't exist (if there are no `rows` or `rows.length`), return null
 
       delete user.password
       const allPosts = await getPostsByUser(userId)
       user.posts = allPosts
       return user
+       // if it does:
+  // delete the 'password' key from the returned object
+  // get their posts (use getPostsByUser)
+  // then add the posts to the user object with key 'posts'
+  // return the user object
 
     } catch (error) {
       throw error
@@ -251,14 +266,14 @@ async function getAllUsers() {
         FROM posts
         WHERE id=$1;
       `, [postId]);
-
+        //prevents code from calling getPostById with an invalid id
       if (!post) {
         throw {
           name: "PostNotFoundError",
           message: "Could not find a post with that postId"
         };
       }
-  
+      //need to grab  post first, to grab the tag 
       const { rows: tags } = await client.query(`
         SELECT tags.*
         FROM tags
@@ -284,6 +299,7 @@ async function getAllUsers() {
   }
 
   async function getPostsByTagName(tagName) {
+    //connect posts to post_tags, and then post_tags to tags by the appropriate keys, then just select the posts.id where tags.name is correct
     try {
       const { rows: postIds } = await client.query(`
         SELECT posts.id

@@ -1,6 +1,7 @@
 const express = require('express');
 const tagsRouter = express.Router();
 const { getPostsByTagName } = require("../db")
+//%23 is used to hashtags in url 
 
 tagsRouter.use((req, res, next) => {
     console.log("A request is being made to /tags");

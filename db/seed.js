@@ -1,5 +1,7 @@
+// grab our client with destructuring from the export in index.js
 const { client, getAllUsers, createUser, updateUser, createPost, updatePost, getAllPosts, getPostsByUser, getUserById, createTags, addTagsToPost, getPostsByTagName, getUserByUsername } = require("./index");
 
+// new function, should attempt to create a few users
 async function createInitialUsers() {
   try {
     console.log("Starting to create users...");
@@ -61,11 +63,12 @@ async function createInitialPosts() {
     throw error;
   }
 }
-
+// this function should call a query which drops all tables from our database
 async function dropTables() {
   try {
     console.log("Starting to drop tables...");
     
+        // have to make sure to drop in correct order
     await client.query(`
         DROP TABLE IF EXISTS post_tags;
         DROP TABLE IF EXISTS tags;
@@ -76,10 +79,11 @@ async function dropTables() {
     console.log("Finished dropping tables!");
   } catch (error) {
     console.error("Error dropping tables!");
-    throw error;
+    throw error; // we pass the error up to the function that calls dropTables
   }
 }
 
+// this function should call a query which creates all tables for our database 
 async function createTables() {
   try {
     console.log("Starting to build tables...");
@@ -113,14 +117,15 @@ async function createTables() {
     console.log("Finished building tables!");
   } catch (error) {
     console.error("Error building tables!");
-    throw error;
+    throw error; // we pass the error up to the function that calls createTables
   }
 }
 
 async function createInitialTags() {
   try {
     console.log("Starting to create tags...");
-
+    
+    // queries are promises, so we can await them
     const [happy, sad, inspo, catman] = await createTags([
       '#happy', 
       '#worst-day-ever', 
@@ -209,3 +214,4 @@ rebuildDB()
   .then(testDB)
   .catch(console.error)
   .finally(() => client.end());
+    // it's important to close out the client connection

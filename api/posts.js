@@ -27,7 +27,7 @@ postsRouter.get('/', async (req, res, next) => {
 postsRouter.post("/", requireUser, async (req, res, next) => {
   const { title, content, tags = "" } = req.body;
   const authorId = req.user.id;
-
+//First the call to trim() removes any spaces in the front or back, and then split will turn the string into an array, splitting over any number of spaces.
   const tagArr = tags.trim().split(/\s+/);
   const postData = { authorId, title, content };
 
